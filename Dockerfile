@@ -1,20 +1,8 @@
-# استخدام نسخة Node خفيفة جداً
-FROM node:18-alpine
-
-# تثبيت Python فقط كإضافة أساسية
-RUN apk add --no-cache python3 py3-pip git
-
-# إنشاء مجلد العمل
+FROM node:18-slim
+RUN apt-get update && apt-get install -y python3
 WORKDIR /app
-
-# جلب كود Piston المصدري (النسخة المصغرة)
-RUN git clone --depth 1 https://github.com/engineer-man/piston.git .
-
-# تثبيت المكتبات اللازمة لتشغيل السيرفر فقط
-RUN npm install --only=production
-
-# إعداد المنفذ
+COPY package*.json ./
+RUN npm install
+COPY . .
 EXPOSE 2000
-
-# تشغيل السيرفر
-CMD ["node", "src/index.js"]
+CMD ["node", "server.js"]
